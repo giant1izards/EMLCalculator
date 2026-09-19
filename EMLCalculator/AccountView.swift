@@ -13,6 +13,7 @@ struct AccountView : View {
     private let account: Account
     
     @Environment(\.modelContext) private var context
+    @Environment(NavigationContext.self) private var navigationContext
 #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isCompact: Bool { horizontalSizeClass == .compact }
@@ -37,6 +38,10 @@ struct AccountView : View {
             HStack {
                 Text("Expense:")
                 Text(getAmountOwed().description).foregroundStyle(getAmountOwed() > 0 ? .red : .green)
+                Button("Enter Payment", systemImage: "repeat") {
+                    navigationContext.repaymentContext = RepaymentContext(account: account, initialAmount: getAmountOwed())
+                    navigationContext.showRepaymentView = true
+                }
             }
             Table(transactions) {
                 TableColumn("Date") { t in
