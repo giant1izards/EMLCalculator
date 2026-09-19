@@ -13,6 +13,12 @@ struct AccountView : View {
     private let account: Account
     
     @Environment(\.modelContext) private var context
+#if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    private var isCompact: Bool { horizontalSizeClass == .compact }
+#else
+    private let isCompact = false
+#endif
     
     @Query(sort: \Transaction.date) private var transactions: [Transaction]
     
@@ -34,7 +40,18 @@ struct AccountView : View {
             }
             Table(transactions) {
                 TableColumn("Date") { t in
-                    Text(t.date.formatted(date: .abbreviated, time: .omitted))
+                    VStack(alignment: .leading) {
+                        Text(t.date.formatted(date: .abbreviated, time: .omitted))
+                        if isCompact {
+                            Text(t.memo)
+                            Text("\(t.amount)").foregroundStyle(t.amount < 0 ? .green : .red)
+                            Button(action: {
+                                context.delete(t)
+                            }) {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                    }
                 }
                 TableColumn("Memo", value: \.memo)
                 TableColumn("Amount") { t in
