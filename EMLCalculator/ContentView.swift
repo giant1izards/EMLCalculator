@@ -22,6 +22,14 @@ struct ContentView: View {
                 .onDelete(perform: deleteItems)
             }
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Account List")
+                }
+                ToolbarItem {
+                    Button(action: openSettings) {
+                        Label("Settings", systemImage: "gear")
+                    }
+                }
                 ToolbarItem {
                     Button(action: executeTransaction) {
                         Label("New Transaction", systemImage: "repeat")
@@ -52,9 +60,16 @@ struct ContentView: View {
                 .navigationDestination(isPresented: $navigationContext.showRepaymentView) {
                     RepaymentView()
                 }
+                .navigationDestination(isPresented: $navigationContext.showSettingsView) {
+                    SettingsView()
+                }
             }
         }
         .environment(navigationContext)
+    }
+    
+    private func openSettings() {
+        navigationContext.showSettingsView = true
     }
     
     private func executeTransaction() {

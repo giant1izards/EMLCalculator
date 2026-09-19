@@ -16,13 +16,14 @@ struct RepaymentView : View {
     @State private var memo: String = ""
     @State private var amount: Int = 0
     
+    @Query() private var settings: [AppSettings]
+    
     @ViewBuilder
     var body: some View {
         VStack {
-            Text("Repayment from \(navigationContext.repaymentContext?.account.name ?? "")")
             Form {
-                TextField("Amount", value: $amount, format: .number)
-                DatePicker("Repayment Date", selection: $selectedDate)
+                TextField("Amount \(Currency.getConfiguredSymbol(settings: settings))", value: $amount, format: .number)
+                DatePicker("Repayment Date", selection: $selectedDate, displayedComponents: [.date])
                 TextField("Memo", text: $memo)
             }
         }
@@ -30,6 +31,9 @@ struct RepaymentView : View {
             amount = navigationContext.repaymentContext!.initialAmount
         }
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Repayment from \(navigationContext.repaymentContext?.account.name ?? "")")
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     let newTransaction = Transaction(amount: amount * -1, account: navigationContext.repaymentContext!.account, date: selectedDate, memo: memo)

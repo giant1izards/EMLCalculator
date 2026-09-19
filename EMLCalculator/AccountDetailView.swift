@@ -18,13 +18,20 @@ struct AccountDetailView : View {
         if let account {
             AccountView(account: account)
                 .toolbar {
-                    Button("Edit", systemImage: "pencil") {
-                        navigationContext.showAccountEditorView = true
+                    ToolbarItem(placement: .principal) {
+                        Text(account.name)
+                    }
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Edit", systemImage: "pencil") {
+                            navigationContext.showAccountEditorView = true
+                        }
                     }
                     
-                    Button("Delete", systemImage: "trash") {
-                        navigationContext.selectedAccount = nil
-                        context.delete(account)
+                    ToolbarItem(placement: .destructiveAction) {
+                        Button("Delete", systemImage: "trash") {
+                            navigationContext.selectedAccount = nil
+                            context.delete(account)
+                        }
                     }
                 }
         }

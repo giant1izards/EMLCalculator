@@ -12,7 +12,7 @@ import SwiftData
 struct EMLCalculatorApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Account.self, Transaction.self
+            Account.self, Transaction.self, AppSettings.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -22,10 +22,13 @@ struct EMLCalculatorApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+    
+    @State private var settingsContext = SettingsContext()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(settingsContext)
         }
         .modelContainer(sharedModelContainer)
     }

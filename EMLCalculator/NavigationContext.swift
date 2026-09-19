@@ -15,6 +15,7 @@ class NavigationContext {
     var showTransactionEditorView: Bool
     var showAccountSelectionView: Bool
     var showRepaymentView: Bool
+    var showSettingsView: Bool
     
     var repaymentContext: RepaymentContext?
     
@@ -24,6 +25,7 @@ class NavigationContext {
         self.showTransactionEditorView = false
         self.showAccountSelectionView = false
         self.showRepaymentView = false
+        self.showSettingsView = false
         self.repaymentContext = nil
     }
 }
