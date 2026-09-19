@@ -18,7 +18,6 @@ struct TransactionView : View {
     @State private var expense: Int = 0
     @State private var isSelectingAccount: Bool = false
     @State private var includeSelf: Bool = true
-    @State private var isRepayment: Bool = false
     
     @Query(sort: \Account.name) private var accounts: [Account]
     
@@ -33,11 +32,9 @@ struct TransactionView : View {
                     Toggle(isOn: $includeSelf) {
                         Text("Include self")
                     }
-                    Toggle(isOn: $isRepayment) {
-                        Text("Repayment")
-                    }
                 }
             }
+            .frame(minHeight: 400)
             
             List(accounts, id: \.self, selection: $selectedAccounts) { account in
                 Text(selectedAccounts.isEmpty || !selectedAccounts.contains(where: { selectedAccount in
@@ -59,7 +56,7 @@ struct TransactionView : View {
     }
     
     private func getAmountOwed() -> Int {
-        let includeSelfFactor = (includeSelf && !isRepayment) ? 1 : 0
-        return (expense / (selectedAccounts.count + includeSelfFactor)) * (isRepayment ? -1 : 1)
+        let includeSelfFactor = includeSelf ? 1 : 0
+        return expense / (selectedAccounts.count + includeSelfFactor)
     }
 }

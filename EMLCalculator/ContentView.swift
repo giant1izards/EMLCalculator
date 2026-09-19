@@ -49,6 +49,9 @@ struct ContentView: View {
                 .navigationDestination(isPresented: $navigationContext.showTransactionEditorView) {
                     TransactionView()
                 }
+                .navigationDestination(isPresented: $navigationContext.showRepaymentView) {
+                    RepaymentView()
+                }
             }
         }
         .environment(navigationContext)
