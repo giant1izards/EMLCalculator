@@ -20,6 +20,9 @@ struct AccountEditorView : View {
                     TextField("Account name", text: $accountName)
             }
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Editing \(accountName)")
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         if let account {

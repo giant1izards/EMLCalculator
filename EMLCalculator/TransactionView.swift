@@ -20,13 +20,14 @@ struct TransactionView : View {
     @State private var includeSelf: Bool = true
     
     @Query(sort: \Account.name) private var accounts: [Account]
+    @Query() private var settings: [AppSettings]
     
     @ViewBuilder
     var body: some View {
         VStack {
             Form {
-                TextField("Expense", value: $expense, format: .number)
-                DatePicker("Expense Date", selection: $selectedDate)
+                TextField("Expense \(Currency.getConfiguredSymbol(settings: settings))", value: $expense, format: .number)
+                DatePicker("Expense Date", selection: $selectedDate, displayedComponents: [.date])
                 TextField("Memo", text: $expenseMemo)
                 HStack {
                     Toggle(isOn: $includeSelf) {
@@ -43,6 +44,9 @@ struct TransactionView : View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Record Expense")
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                         for account in selectedAccounts {

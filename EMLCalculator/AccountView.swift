@@ -14,6 +14,7 @@ struct AccountView : View {
     
     @Environment(\.modelContext) private var context
     @Environment(NavigationContext.self) private var navigationContext
+    
 #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isCompact: Bool { horizontalSizeClass == .compact }
@@ -22,6 +23,7 @@ struct AccountView : View {
 #endif
     
     @Query(sort: \Transaction.date) private var transactions: [Transaction]
+    @Query() private var settings: [AppSettings]
     
     init(account: Account) {
         self.account = account
@@ -32,24 +34,22 @@ struct AccountView : View {
     var body: some View {
         VStack {
             HStack {
-                Text("Name:")
-                Text(account.name)
+                Text("Owed:")
+                Text("\(Currency.getConfiguredSymbol(settings: settings))\(getAmountOwed().description)").foregroundStyle(getAmountOwed() > 0 ? .red : .green)
             }
-            HStack {
-                Text("Expense:")
-                Text(getAmountOwed().description).foregroundStyle(getAmountOwed() > 0 ? .red : .green)
-                Button("Enter Payment", systemImage: "repeat") {
-                    navigationContext.repaymentContext = RepaymentContext(account: account, initialAmount: getAmountOwed())
-                    navigationContext.showRepaymentView = true
-                }
+            
+            Button("Record Payment", systemImage: "repeat") {
+                navigationContext.repaymentContext = RepaymentContext(account: account, initialAmount: getAmountOwed())
+                navigationContext.showRepaymentView = true
             }
+            
             Table(transactions) {
                 TableColumn("Date") { t in
                     VStack(alignment: .leading) {
                         Text(t.date.formatted(date: .abbreviated, time: .omitted))
                         if isCompact {
                             Text(t.memo)
-                            Text("\(t.amount)").foregroundStyle(t.amount < 0 ? .green : .red)
+                            Text("\(Currency.getConfiguredSymbol(settings: settings))\(t.amount)").foregroundStyle(t.amount < 0 ? .green : .red)
                             Button(action: {
                                 context.delete(t)
                             }) {
@@ -60,7 +60,7 @@ struct AccountView : View {
                 }
                 TableColumn("Memo", value: \.memo)
                 TableColumn("Amount") { t in
-                    Text("\(t.amount)").foregroundStyle(t.amount < 0 ? .green : .red)
+                    Text("\(Currency.getConfiguredSymbol(settings: settings))\(t.amount)").foregroundStyle(t.amount < 0 ? .green : .red)
                 }
                 TableColumn("") { t in
                     Button(action: {
